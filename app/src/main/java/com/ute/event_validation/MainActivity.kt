@@ -22,14 +22,32 @@ class MainActivity : AppCompatActivity() {
         binding.btnRegister.setOnClickListener {
             handleRegister()
         }
+        binding.btnViewDetail.setOnClickListener {
+            navigateToDetail()
+        }
     }
 
     private fun setupRealtimeValidation() {
-        binding.etName.doAfterTextChanged { binding.tilName.error = null }
-        binding.etEmail.doAfterTextChanged { binding.tilEmail.error = null }
-        binding.etPhone.doAfterTextChanged { binding.tilPhone.error = null }
-        binding.etMsv.doAfterTextChanged { binding.tilMsv.error = null }
-        binding.etClass.doAfterTextChanged { binding.tilClass.error = null }
+        binding.etName.doAfterTextChanged {
+            binding.tilName.error = null
+            binding.btnViewDetail.isEnabled = false // Khóa lại nếu có chỉnh sửa
+        }
+        binding.etEmail.doAfterTextChanged {
+            binding.tilEmail.error = null
+            binding.btnViewDetail.isEnabled = false
+        }
+        binding.etPhone.doAfterTextChanged {
+            binding.tilPhone.error = null
+            binding.btnViewDetail.isEnabled = false
+        }
+        binding.etMsv.doAfterTextChanged {
+            binding.tilMsv.error = null
+            binding.btnViewDetail.isEnabled = false
+        }
+        binding.etClass.doAfterTextChanged {
+            binding.tilClass.error = null
+            binding.btnViewDetail.isEnabled = false
+        }
     }
 
     private fun handleRegister() {
@@ -68,18 +86,22 @@ class MainActivity : AppCompatActivity() {
         }
 
         if (isValid) {
+            binding.btnViewDetail.isEnabled = true
             val snackbar = Snackbar.make(binding.root, "Đăng ký thành công!", Snackbar.LENGTH_LONG)
             snackbar.setAction("XEM CHI TIẾT") {
-                val intent = Intent(this, DetailActivity::class.java).apply {
-                    putExtra("EXTRA_NAME", name)
-                    putExtra("EXTRA_EMAIL", email)
-                    putExtra("EXTRA_PHONE", phone)
-                    putExtra("EXTRA_MSV", msv)
-                    putExtra("EXTRA_CLASS", className)
-                }
-                startActivity(intent)
+                navigateToDetail() // GỌI HÀM Ở ĐÂY
             }
             snackbar.show()
         }
+    }
+    private fun navigateToDetail() {
+        val intent = Intent(this, DetailActivity::class.java).apply {
+            putExtra("EXTRA_NAME", binding.etName.text.toString().trim())
+            putExtra("EXTRA_EMAIL", binding.etEmail.text.toString().trim())
+            putExtra("EXTRA_PHONE", binding.etPhone.text.toString().trim())
+            putExtra("EXTRA_MSV", binding.etMsv.text.toString().trim())
+            putExtra("EXTRA_CLASS", binding.etClass.text.toString().trim())
+        }
+        startActivity(intent)
     }
 }
